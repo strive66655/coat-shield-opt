@@ -1,3 +1,4 @@
+import torch
 import argparse
 import json
 import os
@@ -5,18 +6,16 @@ import sys
 import warnings
 
 import pandas as pd
+
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 from sklearn.model_selection import train_test_split
-import torch
 from src.models.sklearn_model import save_sklearn_model, train_random_forest, train_xgboost
 from src.train.mlp_trainer import train_residual_mlp
 from src.utils.config_loader import load_config, prepare_dirs
 from src.utils.dataset import build_dataset, load_data
 from src.utils.metrics import calc_metrics, save_loss_curve, save_pred_plots
-
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-if PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, PROJECT_ROOT)
-
 
 warnings.filterwarnings("ignore")
 
@@ -26,7 +25,7 @@ def main():
     parser.add_argument(
         "--config",
         type=str,
-        default="configs/surrogate_config.yaml",
+        default="configs/config.yaml",
         help="配置文件路径",
     )
     args = parser.parse_args()
