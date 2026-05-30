@@ -5,6 +5,34 @@ import yaml
 def load_config(config_path: str) -> dict:
     with open(config_path, 'r', encoding='utf-8') as f:
         config = yaml.safe_load(f)
+    config = resolve_active_dataset(config)
+    return config
+
+
+def resolve_active_dataset(config: dict) -> dict:
+    datasets = config.get("datasets")
+    if not datasets:
+        return config
+
+    active_dataset = config.get("active_dataset")
+    if not active_dataset:
+        raise KeyError("config.yaml contains datasets but misses active_dataset")
+    if active_dataset not in datasets:
+        raise KeyError(
+            f"active_dataset={active_dataset} is not defined. "
+            f"Available datasets: {list(datasets.keys())}"
+        )
+
+    selected = datasets[active_dataset]
+
+    experiment = dict(config.get("experiment", {}))
+    experiment.update(selected.get("experiment", {}))
+
+    config["experiment"] = experiment
+    config["data"] = selected["data"]
+    config["target"] = selected["target"]
+    config["_active_dataset"] = active_dataset
+
     return config
 
 def prepare_dirs(cfg: dict, config_path: str) -> dict:
