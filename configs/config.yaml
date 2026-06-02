@@ -1,56 +1,35 @@
 experiment:
-  name: exp_baseline_e
+  name: al300_zno200_0602_mlp
   output_root: experiments
   random_state: 42
   test_size: 0.2
 
 data:
-  file_path: data/processed/e_clean.csv
+  file_path: data/cleaned/AL300_ZnO200_0602_cleaned.csv
   file_type: csv
-  use_record_filter: true
-  record_filter_column: record_type
-  record_filter_value: design_candidate
 
 features:
   input_cols:
-    - Al_thickness_um
+    # - Al_thickness_um
     - B4C_thickness_um
     - W_thickness_um
     - ZnO_thickness_um
 
 target:
-  type: multi_improvement
-  output_cols:
-    - improvement_1Mev
-    - improvement_5Mev
-    - improvement_10Mev
+  type: spectrum_models
+  model_tasks:
+    # - model_name: electron_spectrum
+    #   output_cols:
+    #     - electron_spectrum
+    - model_name: proton_spectrum
+      output_cols:
+        - proton_spectrum
 
 models:
-  enabled:
-    RandomForest: false
-    XGBoost: false
-    ResidualMLP: true
-
-  RandomForest:
-    n_estimators: 300
-    max_depth: null
-    min_samples_split: 2
-    min_samples_leaf: 1
-    n_jobs: -1
-
-  XGBoost:
-    n_estimators: 300
-    max_depth: 4
-    learning_rate: 0.05
-    subsample: 0.9
-    colsample_bytree: 0.9
-    objective: reg:squarederror
-    n_jobs: -1
-
   ResidualMLP:
     hidden_dim: 64
-    num_blocks: 3
-    dropout: 0.1
+    num_blocks: 2
+    dropout: 0.2
     lr: 0.001
     weight_decay: 0.00001
     epochs: 500

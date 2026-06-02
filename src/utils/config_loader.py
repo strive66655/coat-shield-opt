@@ -2,8 +2,9 @@ import os
 import shutil
 import yaml
 
+
 def load_config(config_path: str) -> dict:
-    with open(config_path, 'r', encoding='utf-8') as f:
+    with open(config_path, "r", encoding="utf-8") as f:
         config = yaml.safe_load(f)
     config = resolve_active_dataset(config)
     return config
@@ -34,6 +35,7 @@ def resolve_active_dataset(config: dict) -> dict:
     config["_active_dataset"] = active_dataset
 
     return config
+
 
 def prepare_dirs(cfg: dict, config_path: str) -> dict:
     exp_name = cfg["experiment"]["name"]

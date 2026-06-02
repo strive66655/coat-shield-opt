@@ -10,7 +10,6 @@ def load_data(cfg: dict) -> pd.DataFrame:
         raise ValueError(f"当前脚本只支持 csv，收到 file_type={file_type}")
 
     df = pd.read_csv(file_path)
-
     df.columns = [str(c).strip() for c in df.columns]
 
     for col in df.columns:
@@ -20,37 +19,10 @@ def load_data(cfg: dict) -> pd.DataFrame:
     print("\n====== 原始数据列名 ======")
     print(df.columns.tolist())
 
-    if "record_type" in df.columns:
-        print("\n====== record_type 统计 ======")
-        print(df["record_type"].value_counts(dropna=False))
-
-    return df
-
-
-def apply_record_filter(df: pd.DataFrame, cfg: dict) -> pd.DataFrame:
-    if not cfg["data"].get("use_record_filter", False):
-        return df
-
-    filter_col = cfg["data"]["record_filter_column"]
-    filter_value = cfg["data"]["record_filter_value"]
-
-    if filter_col not in df.columns:
-        raise KeyError(f"筛选列 {filter_col} 不在数据中。当前列名为：{df.columns.tolist()}")
-
-    before = len(df)
-    df = df[df[filter_col].astype(str).str.strip() == filter_value].copy()
-    after = len(df)
-
-    print(f"\n已筛选 {filter_col} == {filter_value}")
-    print(f"筛选前样本数： {before}")
-    print(f"筛选后样本数： {after}")
-
     return df
 
 
 def build_dataset(df: pd.DataFrame, cfg: dict):
-    df = apply_record_filter(df, cfg)
-
     input_cols = cfg["features"]["input_cols"]
     output_cols = cfg["target"]["output_cols"]
 
@@ -100,7 +72,7 @@ def build_dataset(df: pd.DataFrame, cfg: dict):
         )
 
     print("\n====== 50% 提升统计 ======")
-    print("所有能量点都 >= 0.5 的样本数：", int(data["pass_50_all_energy"].sum()))
+    print("所有目标都 >= 0.5 的样本数：", int(data["pass_50_all_energy"].sum()))
     print("总样本数：", len(data))
 
     return X, y, input_cols, output_cols, data

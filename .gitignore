@@ -219,6 +219,6 @@ __marimo__/
 
 .vscode/settings.json
 
-data/processed/
+data/
 
 experiments/
